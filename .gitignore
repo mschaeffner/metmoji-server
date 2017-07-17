@@ -32,3 +32,8 @@ app.properties
 
 # list of all cities, used for auto-suggest
 city.list.json
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
