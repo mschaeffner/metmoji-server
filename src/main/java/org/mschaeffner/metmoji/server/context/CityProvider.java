@@ -13,6 +13,8 @@ public class CityProvider {
 
 	private static final int MIN_PREFIX_FOR_COMPLETION = 2;
 
+	private static final int MAX_NUMBER_OF_COMPLETIONS = 20;
+
 	private final TreeSet<City> cities;
 
 	public CityProvider(Collection<City> cities) {
@@ -46,6 +48,9 @@ public class CityProvider {
 		for (City city : tailSet) {
 			if (city.getName().toLowerCase().startsWith(cleanPrefix)) {
 				result.add(city);
+				if(result.size() >= MAX_NUMBER_OF_COMPLETIONS) {
+					break;
+				}
 			} else {
 				break;
 			}
