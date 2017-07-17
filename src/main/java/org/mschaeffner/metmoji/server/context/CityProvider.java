@@ -19,7 +19,7 @@ public class CityProvider {
 		this.cities = new TreeSet<City>(new Comparator<City>() {
 			@Override
 			public int compare(City city1, City city2) {
-				return city1.getName().compareToIgnoreCase(city2.getName());
+				return city1.getName().toLowerCase().compareTo(city2.getName().toLowerCase());
 			}
 		});
 
@@ -34,7 +34,7 @@ public class CityProvider {
 			return null;
 		}
 
-		final String cleanPrefix = prefix.trim();
+		final String cleanPrefix = prefix.trim().toLowerCase();
 		if (cleanPrefix.length() < MIN_PREFIX_FOR_COMPLETION) {
 			// TODO throw an exception
 			return null;
@@ -44,7 +44,7 @@ public class CityProvider {
 		final City prefixCity = new City(0l, cleanPrefix, null, null);
 		final SortedSet<City> tailSet = cities.tailSet(prefixCity);
 		for (City city : tailSet) {
-			if (city.getName().startsWith(cleanPrefix)) {
+			if (city.getName().toLowerCase().startsWith(cleanPrefix)) {
 				result.add(city);
 			} else {
 				break;
