@@ -1,9 +1,10 @@
 package org.mschaeffner.metmoji.server.context;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.mschaeffner.metmoji.server.owm.client.ApiClient;
-import org.mschaeffner.metmoji.server.owm.domain.City;
+import org.mschaeffner.metmoji.server.owm.domain.CurrentWeather;
 import org.mschaeffner.metmoji.server.owm.domain.Forecast;
 
 import spark.Service;
@@ -14,7 +15,10 @@ public class App {
 
 		http.get("/api/v1/cities", (request, response) -> {
 			final String q = request.queryParamOrDefault("q", "");
-			final List<City> result = cityProvider.findCompletions(q);
+			final List<CityResult> result = cityProvider.findCompletions(q) //
+					.stream() //
+					.map(x -> new CityResult(x.getId(), x.getName(), x.getCountry())) //
+					.collect(Collectors.toList());
 			return result;
 		}, JSON::toJson);
 
@@ -30,8 +34,24 @@ public class App {
 				return null;
 			}
 
-			final Forecast result = apiClient.getForecastByCityId(cityId);
-			return result;
+			final Forecast forecastData = apiClient.getForecastByCityId(cityId);
+			final CurrentWeather currentData = apiClient.getCurrentWeatherByCityId(cityId);
+
+			final List<ForecastResultItem> forecast = forecastData.getList() //
+					.stream() //
+					.map(x -> new ForecastResultItem(x.getDt(), //
+							x.getWeather().get(0).getIcon(), //
+							x.getWeather().get(0).getDescription(), //
+							x.getMain().getTemp_min(), //
+							x.getMain().getTemp_max() //
+			)) //
+					.collect(Collectors.toList());
+
+			final ForecastResultCurrentWeather currentWeather = new ForecastResultCurrentWeather(currentData.getDt(),
+					currentData.getWeather().get(0).getIcon(), currentData.getWeather().get(0).getDescription(),
+					currentData.getMain().getTemp());
+
+			return new ForecastResult(currentWeather, forecast);
 		}, JSON::toJson);
 
 		enableCors(http);

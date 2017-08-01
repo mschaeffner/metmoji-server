@@ -34,6 +34,7 @@ public class ApiClient {
 		final HttpResponse<CurrentWeather> response = Unirest.get("http://api.openweathermap.org/data/2.5/weather")
 				.queryString("APPID", apiKey) //
 				.queryString("id", cityId) //
+				.queryString("units", "metric") //
 				.asObject(CurrentWeather.class);
 		final CurrentWeather result = response.getBody();
 		return result;
@@ -43,6 +44,7 @@ public class ApiClient {
 		final HttpResponse<Forecast> response = Unirest.get("http://api.openweathermap.org/data/2.5/forecast")
 				.queryString("APPID", apiKey) //
 				.queryString("id", cityId) //
+				.queryString("units", "metric") //
 				.asObject(Forecast.class);
 		final Forecast result = response.getBody();
 		return result;
